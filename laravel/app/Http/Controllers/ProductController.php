@@ -19,7 +19,7 @@ class ProductController extends Controller
     // related to users, including showing, creating, updating, and deleting users. 
 
     
-//    // Get /api/products
+  // Get /api/products
 
 
     public function getProducts()
