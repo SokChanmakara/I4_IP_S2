@@ -18,8 +18,8 @@ return new class extends Migration
             $table->timestamp('payment_date');
             $table->string('payment_method',100);
             $table->decimal('amount',10,2);
-            $table->foreign('order_id')->references('orders')->on('id')->onDelete('cascade');
-            $table->foreign('customer_id')->references('customers')->on('id')->onDelete('cascade');
+            $table->foreign('order_id')->references('id')->on('orders');
+            $table->foreign('customer_id')->references('id')->on('customers');
             $table->timestamps();
         });
     }
