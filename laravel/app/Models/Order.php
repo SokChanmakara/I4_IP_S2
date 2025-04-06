@@ -18,7 +18,7 @@ class Order extends Model
         'total_price',
     ];
 
-    public function payment()
+    public function payments()
     {
         return $this-> hasMany(Payment::class);
     }
@@ -26,7 +26,7 @@ class Order extends Model
     {
         return $this-> belongsTo(Customer::class);
     }
-    public function orderProduct()
+    public function orderProducts()
     {
         return $this->hasMany(OrderProduct::class);
     }

@@ -12,7 +12,7 @@ class Wishlist extends Model
         'product_id',
         'customer_id'
     ];
-    public function products()
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }

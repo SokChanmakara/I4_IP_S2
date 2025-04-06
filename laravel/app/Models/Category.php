@@ -19,7 +19,7 @@ class Category extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function cart()
+    public function carts()
     {
         return $this->hasMany(Cart::class);
     }

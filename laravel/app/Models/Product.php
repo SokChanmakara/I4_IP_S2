@@ -24,15 +24,15 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function cart()
+    public function carts()
     {
         return $this->hasMany(Cart::class);
     }
-    public function wishlist()
+    public function wishlists()
     {
         return $this->hasMany(Wishlist::class);
     }
-    public function orderProduct()
+    public function orderProducts()
     {
         return $this->hasMany(OrderProduct::class);
     }
