@@ -1,14 +1,15 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
-use Illuminate\Testing\Fluent\AssertableJson;
+use App\Models\Category;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-
-use function Psy\debug;
 
 class CategoryTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test ID: Category-001
      * Description: Verify that the GET /api/categories endpoint returns a successful response.
@@ -47,26 +48,14 @@ class CategoryTest extends TestCase
      */
     public function test_if_we_can_access_create_category_api(): void
     {
-        $response = $this->postJson('/api/categories', [
-            "name" => "test_category_01"
-        ]);
-        $response->assertStatus(201);
-        $response->assertJson(["message" => "Category created successfully"]);
-        $response->assertSee("test_category_01");
-
-        $response = $this->postJson('/api/categories', [
-            "name" => "test_category_02"
-        ]);
-        $response->assertStatus(201);
-        $response->assertJson(["message" => "Category created successfully"]);
-        $response->assertSee("test_category_02");
-
-        $response = $this->postJson('/api/categories', [
-            "name" => "test_category_03"
-        ]);
-        $response->assertStatus(201);
-        $response->assertJson(["message" => "Category created successfully"]);
-        $response->assertSee("test_category_03");
+        foreach (['test_category_01', 'test_category_02', 'test_category_03'] as $name) {
+            $response = $this->postJson('/api/categories', ['name' => $name]);
+            $response->assertStatus(201);
+            $response->assertJson([
+                "message" => "Category created successfully"
+            ]);
+            $response->assertJsonFragment(["name" => $name]);
+        }
     }
 
     /**
@@ -85,16 +74,16 @@ class CategoryTest extends TestCase
      */
     public function test_if_we_can_access_get_a_category_by_id_api(): void
     {
-        $category = \App\Models\Category::create([
-            'name' => 'CategoryToGet'
-        ]);
-    
+        $category = Category::create(['name' => 'CategoryToGet']);
+
         $response = $this->get("/api/categories/{$category->id}");
-        $response->assertStatus(200)->assertJsonFragment([
-            "id" => $category->id,
-            "name" => "CategoryToGet"
-        ]);
+        $response->assertStatus(200)
+                ->assertJsonFragment([
+                    'id' => $category->id,
+                    'name' => 'CategoryToGet'
+                ]);
     }
+
     /**
      * Test ID: Category-004
      * Description: Verify that a category can be updated by its ID using the PATCH /api/categories/{id} endpoint.
@@ -111,11 +100,17 @@ class CategoryTest extends TestCase
      */
     public function test_if_we_can_access_update_a_category_by_id_api(): void
     {
-        $response = $this->patch('/api/categories/2', ["name" => "test_category_updated"]);
-        $response->assertStatus(200)->assertSee([
-            "id" => 2,
+        $category = Category::create(['name' => 'Old Name']);
+
+        $response = $this->patchJson("/api/categories/{$category->id}", [
             "name" => "test_category_updated"
         ]);
+
+        $response->assertStatus(200)
+                ->assertJsonFragment([
+                    'id' => $category->id,
+                    'name' => 'test_category_updated'
+                ]);
     }
 
     /**
@@ -135,23 +130,21 @@ class CategoryTest extends TestCase
      */
     public function test_if_we_can_access_delete_a_category_by_id_api(): void
     {
-        $category = \App\Models\Category::create([
-            'name' => 'CategoryToDelete'
-        ]);
-    
-        $response = $this->delete("/api/categories/{$category->id}");
-        $response->assertStatus(200)->assertJson([
-            "message" => 'Category deleted successfully'
-        ]);
-    
-        // Try deleting again
-        $request = $this->delete("/api/categories/{$category->id}");
-        $request->assertStatus(404)->assertJson([
-            "message" => 'Category not found'
-        ]);
-    
-        // Try fetching deleted category
-        $request = $this->get("/api/categories/{$category->id}");
-        $request->assertStatus(404);
+        $category = Category::create(['name' => 'CategoryToDelete']);
+
+        $deleteResponse = $this->delete("/api/categories/{$category->id}");
+        $deleteResponse->assertStatus(200)
+                    ->assertJson([
+                        "message" => "Category deleted successfully"
+                    ]);
+
+        $secondDelete = $this->delete("/api/categories/{$category->id}");
+        $secondDelete->assertStatus(404)
+                    ->assertJson([
+                        "message" => "Category not found"
+                    ]);
+
+        $getAfterDelete = $this->get("/api/categories/{$category->id}");
+        $getAfterDelete->assertStatus(404);
     }
 }
