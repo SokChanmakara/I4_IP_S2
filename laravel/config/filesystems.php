@@ -59,6 +59,14 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        'minio' => [
+            'driver' => 's3',
+            'key' => env('OYHJDKpzK6kJEH1RTHys'),
+            'secret' => env('LUZKJlXIW7vo6PUVOonX7evIknFBb3fXqr9iIOvuLUZKJlXIW7vo6PUVOonX7evIknFBb3fXqr9iIOvu'),
+            'region' => env('MINIO_REGION', 'us-east-1'),
+            'bucket' => env('makara-tp9'),
+            'endpoint' => env('http://your_minio_server_address:9000'),
+],
 
     ],
 
