@@ -61,10 +61,10 @@ return [
         ],
         'minio' => [
             'driver' => 's3',
-            'key' => env('OYHJDKpzK6kJEH1RTHys'),
-            'secret' => env('LUZKJlXIW7vo6PUVOonX7evIknFBb3fXqr9iIOvuLUZKJlXIW7vo6PUVOonX7evIknFBb3fXqr9iIOvu'),
+            'key' => env('VlBC3TSfwzD7Z8tW90Cx'),
+            'secret' => env('1miZnrqShL9fEWp5Knj2Cr4rFrauHhQtjNlTUZYF'),
             'region' => env('MINIO_REGION', 'us-east-1'),
-            'bucket' => env('makara-tp9'),
+            'bucket' => env('makara'),
             'endpoint' => env('http://your_minio_server_address:9000'),
 ],
 
