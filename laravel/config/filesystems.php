@@ -61,12 +61,14 @@ return [
         ],
         'minio' => [
             'driver' => 's3',
-            'key' => env('VlBC3TSfwzD7Z8tW90Cx'),
-            'secret' => env('1miZnrqShL9fEWp5Knj2Cr4rFrauHhQtjNlTUZYF'),
+            'key'    => env('MINIO_ACCESS_KEY_ID'),
+            'secret' => env('MINIO_SECRET_ACCESS_KEY'),
             'region' => env('MINIO_REGION', 'us-east-1'),
-            'bucket' => env('makara'),
-            'endpoint' => env('http://your_minio_server_address:9000'),
-],
+            'bucket' => env('MINIO_BUCKET'),
+            'endpoint' => env('MINIO_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+        
+        ],
 
     ],
 
