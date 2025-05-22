@@ -1,39 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Task } from './task.entity';
 
 @Injectable()
 export class TaskService {
-  getTask(id: string) {
-    console.log(id);
-    return {
-      name: 'Task 1',
-      description: 'Description of Task 1',
-      createdAt: new Date().toISOString(),
-      completedAt: null,
-      userId: 1,
-    };
+  constructor(
+    @InjectRepository(Task)
+    private readonly taskRepo: Repository<Task>,
+  ) {}
+
+  async getTask(id: number) {
+    const task = await this.taskRepo.findOne({ where: { id }, relations: ['user'] });
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+    return task;
   }
-  createTask(body: any) {
-    console.log(body);
-    return {
-      name: 'Task 1',
-      description: 'Description of Task 1',
-      createdAt: new Date().toISOString(),
-      completedAt: null,
-      userId: 1,
-    };
+
+  async getAllTasks() {
+    return await this.taskRepo.find({ relations: ['user'] });
   }
-  updateTask(id: string, body: any) {
-    console.log(body);
-    return {
-      name: 'Task 1',
-      description: 'Description of Task 1',
-      createdAt: new Date().toISOString(),
-      completedAt: null,
-      userId: 1,
-    };
+
+  async createTask(taskData: Partial<Task>) {
+    const task = this.taskRepo.create({
+      ...taskData,
+      createdAt: new Date(),
+    });
+    return await this.taskRepo.save(task);
   }
-  deleteTask(id: string) {
-    console.log(id);
-    return { message: 'success' };
+
+  async updateTask(id: number, updateData: Partial<Task>) {
+    const task = await this.getTask(id); 
+    Object.assign(task, updateData);
+    return await this.taskRepo.save(task);
+  }
+
+  async deleteTask(id: number) {
+    const result = await this.taskRepo.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+    return { message: 'Task deleted successfully' };
   }
 }
