@@ -2,13 +2,19 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from './task.entity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepo: Repository<Task>,
+    private readonly notifier:NotificationService
   ) {}
+
+  create(task:any){
+    this.notifier.notify(`Task "${task.title}" created.`)
+  }
 
   async getTask(id: number) {
     const task = await this.taskRepo.findOne({ where: { id }, relations: ['user'] });

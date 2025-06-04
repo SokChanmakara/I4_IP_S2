@@ -4,9 +4,14 @@ import { Task } from './task.entity';
 import { TasksController } from './task.controller';
 import { TaskService } from './task.service';
 import { UserModule } from '../user/user.module'; 
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task]), UserModule],
+  imports: [
+    NotificationModule.register({type: 'log'}),
+    TypeOrmModule.forFeature([Task]), 
+    UserModule,
+  ],
   providers: [TaskService],
   controllers: [TasksController],
 })
