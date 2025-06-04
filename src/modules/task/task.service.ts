@@ -49,4 +49,12 @@ export class TaskService {
     }
     return { message: 'Task deleted successfully' };
   }
+
+  findOne(id: number) {
+    const task = this.taskRepo.findOne({ where: { id } }); // Corrected to use taskRepo
+    if (!task) {
+      throw new NotFoundException(`Task with id ${id} not found`);
+    }
+    return task;
+  }
 }

@@ -6,8 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
+import { CreateTaskDto } from './dto/create-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -24,9 +27,10 @@ export class TasksController {
   }
 
   @Post()
-  async create(@Body() body: any) {
-    const task = await this.taskService.createTask(body);
-    this.taskService.create(body); // Trigger notification
+  @UsePipes(new ValidationPipe({whitelist: true}))
+  async create(@Body() createTaskDto: CreateTaskDto) {
+    const task = await this.taskService.createTask(createTaskDto);
+    this.taskService.create(createTaskDto); // Trigger notification
     return task;
   }
 

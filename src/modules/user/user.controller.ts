@@ -28,9 +28,9 @@ export class UsersController {
   }
 
   @Post()
-  @UsePipes(new ValidationPipe({whitelist:true}))
-  create(@Body() body: Partial<CreateUserDto>) {
-    return this.userService.create(body);
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
   }
 
   @Patch(':id')
