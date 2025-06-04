@@ -6,9 +6,12 @@ import {
   Body,
   Patch,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { User } from './user.entity'; // optional, for typing
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -25,7 +28,8 @@ export class UsersController {
   }
 
   @Post()
-  create(@Body() body: Partial<User>) {
+  @UsePipes(new ValidationPipe({whitelist:true}))
+  create(@Body() body: Partial<CreateUserDto>) {
     return this.userService.create(body);
   }
 
