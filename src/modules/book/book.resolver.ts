@@ -1,5 +1,15 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+// Booking interface should be outside the class
+interface Booking {
+  id: string;
+  start_date: string;
+  end_date: string;
+  hotel_id: string;
+  is_checked_in: boolean;
+  price: number;
+}
+
 @Resolver('Book')
 export class BookResolver {
   private books = [
@@ -77,5 +87,54 @@ export class BookResolver {
       console.error(e);
       return false;
     }
+  }
+
+  // Booking logic
+  private bookings: Booking[] = [];
+  private bookingIdCounter = 1;
+
+  @Mutation('bookHotel')
+  bookHotel(
+    @Args('hotel_id') hotel_id: string,
+    @Args('start_date') start_date: string,
+    @Args('end_date') end_date: string,
+    @Args('price') price: number,
+  ): Booking {
+    const booking: Booking = {
+      id: String(this.bookingIdCounter++),
+      hotel_id,
+      start_date,
+      end_date,
+      is_checked_in: false,
+      price,
+    };
+    this.bookings.push(booking);
+    return booking;
+  }
+
+  @Mutation('cancelBooking')
+  cancelBooking(@Args('id') id: string): boolean {
+    const idx = this.bookings.findIndex((b) => b.id === id);
+    if (idx === -1) return false;
+    this.bookings.splice(idx, 1);
+    return true;
+  }
+
+  @Mutation('checkIn')
+  checkIn(@Args('id') id: string): Booking | null {
+    const booking = this.bookings.find((b) => b.id === id);
+    if (!booking) return null;
+    booking.is_checked_in = true;
+    return booking;
+  }
+
+  @Query('bookingsByDateRange')
+  bookingsByDateRange(
+    @Args('start_date') start_date: string,
+    @Args('end_date') end_date: string,
+  ): Booking[] {
+    return this.bookings.filter(
+      (b) => b.start_date >= start_date && b.end_date <= end_date,
+    );
   }
 }

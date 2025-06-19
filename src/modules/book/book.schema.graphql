@@ -8,10 +8,28 @@ type Book {
 type Query {
   books: [Book]
   book(id: ID!): Book
+  bookingsByDateRange(start_date: String!, end_date: String!): [Booking]
 }
 
 type Mutation {
   addBook(title: String!, price: Int!): Book
   updateBook(id: ID!, title: String, price: Int): Book
   deleteBook(id: ID!): Boolean
+  bookHotel(
+    hotel_id: ID!
+    start_date: String!
+    end_date: String!
+    price: Float!
+  ): Booking
+  cancelBooking(id: ID!): Boolean
+  checkIn(id: ID!): Booking
+}
+
+type Booking {
+  id: ID!
+  start_date: String!
+  end_date: String!
+  hotel_id: ID!
+  is_checked_in: Boolean!
+  price: Float!
 }
